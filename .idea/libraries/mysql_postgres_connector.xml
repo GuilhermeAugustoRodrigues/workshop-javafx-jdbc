@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="mysql-postgres-connector">
+    <CLASSES>
+      <root url="file://$USER_HOME$/java-libs/mysql-postgres-connector" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/java-libs/mysql-postgres-connector/src" />
+    </SOURCES>
+    <jarDirectory url="file://$USER_HOME$/java-libs/mysql-postgres-connector" recursive="false" />
+  </library>
+</component>
