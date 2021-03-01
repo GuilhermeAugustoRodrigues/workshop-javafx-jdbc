@@ -58,7 +58,7 @@ public class DepartmentListViewController implements Initializable {
         if (service == null) {
             throw new IllegalStateException("Null service.");
         }
-        List<Department> departmentList = service.getAll();
+        List<Department> departmentList = service.findAll();
         observableList = FXCollections.observableArrayList(departmentList);
         tableViewDepartment.setItems(observableList);
     }
