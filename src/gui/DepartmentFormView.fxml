@@ -28,8 +28,8 @@
             <TextField fx:id="textFieldName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <children>
-                  <Button fx:id="buttonSave" mnemonicParsing="false" text="Save" />
-                  <Button fx:id="buttonCancel" mnemonicParsing="false" text="Cancel" />
+                  <Button fx:id="buttonSave" mnemonicParsing="false" onAction="#onButtonSaveAction" text="Save" />
+                  <Button fx:id="buttonCancel" mnemonicParsing="false" onAction="#onButtonCancelAction" text="Cancel" />
                </children>
             </HBox>
             <Label fx:id="labelError" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1" />
