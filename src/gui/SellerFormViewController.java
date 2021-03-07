@@ -8,15 +8,14 @@ import gui.util.Util;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import model.entities.Seller;
 import model.exceptions.ValidationException;
 import model.service.SellerService;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 public class SellerFormViewController implements Initializable {
@@ -29,7 +28,19 @@ public class SellerFormViewController implements Initializable {
     @FXML
     private TextField textFieldName;
     @FXML
-    private Label labelError;
+    private TextField textFieldEmail;
+    @FXML
+    private TextField textFieldBaseSalary;
+    @FXML
+    private DatePicker datePickerBirthdate;
+    @FXML
+    private Label labelErrorName;
+    @FXML
+    private Label labelErrorEmail;
+    @FXML
+    private Label labelErrorBirthdate;
+    @FXML
+    private Label labelErrorBaseSalary;
     @FXML
     private Button buttonSave;
     @FXML
@@ -79,6 +90,11 @@ public class SellerFormViewController implements Initializable {
         }
         labelId.setText(seller.getId() != null ? seller.getId().toString() : "");
         textFieldName.setText(seller.getName());
+        textFieldEmail.setText(seller.getEmail());
+        textFieldBaseSalary.setText(String.format("%.2f", seller.getBaseSalary()));
+        if (seller.getBirthDate() != null) {
+            datePickerBirthdate.setValue(LocalDate.ofInstant(seller.getBirthDate().toInstant(), ZoneId.systemDefault()));
+        }
     }
 
     private Seller getFormData() {
@@ -107,13 +123,16 @@ public class SellerFormViewController implements Initializable {
     }
 
     private void initializeNodes() {
-        Constraints.setTextFieldMaxLength(textFieldName, 30);
+        Constraints.setTextFieldMaxLength(textFieldName, 70);
+        Constraints.setTextFieldMaxLength(textFieldEmail, 70);
+        Constraints.setTextFieldDouble(textFieldBaseSalary);
+        Util.formatDatePicker(datePickerBirthdate, "dd/MM/yyyy");
     }
 
     private void setErrors(Map<String, String> errors) {
         Set<String> fields = errors.keySet();
         if (fields.contains("name")) {
-            labelError.setText(errors.get("name"));
+            labelErrorName.setText(errors.get("name"));
         }
     }
 }
