@@ -57,7 +57,7 @@ public class SellerListViewController implements Initializable, DataChangeListen
     public void onButtonNewAction(ActionEvent event) {
         Stage parentStage = Util.currentStage(event);
         Seller department = new Seller();
-//        createDialogForm(department, parentStage,"SellerFormView.fxml");
+        createDialogForm(department, parentStage,"SellerFormView.fxml");
     }
 
     public void setService(SellerService service) {
@@ -81,24 +81,24 @@ public class SellerListViewController implements Initializable, DataChangeListen
         tableViewSeller.prefHeightProperty().bind(stage.heightProperty());
     }
 
-//    private void initializeEditButtons() {
-//        tableColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-//        tableColumnEdit.setCellFactory(param -> new TableCell<>() {
-//            private final Button button = new Button("Edit");
-//
-//            @Override
-//            protected void updateItem(Seller department, boolean empty) {
-//                super.updateItem(department, empty);
-//                if (department == null) {
-//                    setGraphic(null);
-//                    return;
-//                }
-//                setGraphic(button);
-//                button.setOnAction(event ->
-//                        createDialogForm(department, Util.currentStage(event), "SellerFormView.fxml" ));
-//            }
-//        });
-//    }
+    private void initializeEditButtons() {
+        tableColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnEdit.setCellFactory(param -> new TableCell<>() {
+            private final Button button = new Button("Edit");
+
+            @Override
+            protected void updateItem(Seller department, boolean empty) {
+                super.updateItem(department, empty);
+                if (department == null) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(button);
+                button.setOnAction(event ->
+                        createDialogForm(department, Util.currentStage(event), "SellerFormView.fxml" ));
+            }
+        });
+    }
 
     private void initializeDeleteButtons() {
         tableColumnDelete.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
@@ -143,33 +143,33 @@ public class SellerListViewController implements Initializable, DataChangeListen
         List<Seller> departmentList = service.findAll();
         observableList = FXCollections.observableArrayList(departmentList);
         tableViewSeller.setItems(observableList);
-//        initializeEditButtons();
+        initializeEditButtons();
         initializeDeleteButtons();
     }
 
-//    private void createDialogForm(Seller department, Stage parentStage, String absoluteName) {
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-//            Pane pane = loader.load();
-//
-//            SellerFormViewController controller = loader.getController();
-//            controller.setSeller(department);
-//            controller.setSellerService(service);
-//            controller.subscribeDataChangeListener(this);
-//            controller.setFormData();
-//
-//            Stage dialogStage = new Stage();
-//            dialogStage.setTitle("Enter department data:");
-//            dialogStage.setScene(new Scene(pane));
-//            dialogStage.setResizable(false);
-//            dialogStage.initOwner(parentStage);
-//            dialogStage.initModality(Modality.WINDOW_MODAL);
-//            dialogStage.showAndWait();
-//        } catch (IOException e) {
-//            Alerts.showAlert("IOException", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
-//            e.printStackTrace();
-//        }
-//    }
+    private void createDialogForm(Seller department, Stage parentStage, String absoluteName) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+            Pane pane = loader.load();
+
+            SellerFormViewController controller = loader.getController();
+            controller.setSeller(department);
+            controller.setSellerService(service);
+            controller.subscribeDataChangeListener(this);
+            controller.setFormData();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Enter department data:");
+            dialogStage.setScene(new Scene(pane));
+            dialogStage.setResizable(false);
+            dialogStage.initOwner(parentStage);
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            Alerts.showAlert("IOException", "Error loading view", e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onDataChange() {
