@@ -90,8 +90,8 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
     }
 
     private void initializeDeleteButtons() {
-        tableColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
-        tableColumnEdit.setCellFactory(param -> new TableCell<>() {
+        tableColumnDelete.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnDelete.setCellFactory(param -> new TableCell<>() {
             private final Button button = new Button("Delete");
 
             @Override
