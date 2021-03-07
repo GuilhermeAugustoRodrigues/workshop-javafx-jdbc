@@ -1,6 +1,7 @@
 package gui;
 
 import app.Main;
+import db.DbIntegrityException;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Util;
@@ -23,6 +24,7 @@ import model.service.DepartmentService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class DepartmentListViewController implements Initializable, DataChangeListener {
@@ -37,6 +39,8 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
     private TableColumn<Department, String> tableColumnName;
     @FXML
     private TableColumn<Department, Department> tableColumnEdit;
+    @FXML
+    private TableColumn<Department, Department> tableColumnDelete;
     @FXML
     private Button buttonNew;
 
@@ -85,6 +89,42 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         });
     }
 
+    private void initializeDeleteButtons() {
+        tableColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        tableColumnEdit.setCellFactory(param -> new TableCell<>() {
+            private final Button button = new Button("Delete");
+
+            @Override
+            protected void updateItem(Department department, boolean empty) {
+                super.updateItem(department, empty);
+                if (department == null) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(button);
+                button.setOnAction(event -> removeEntity(department));
+            }
+        });
+    }
+
+    private void removeEntity(Department department) {
+        Optional<ButtonType> result = Alerts.showConfirmation("Confirmation",
+                "Are you sure? This operation can not be undone.");
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            if (service == null) {
+                throw new IllegalStateException("Service is null.");
+            }
+            try {
+                service.delete(department);
+                updateTableView();
+            } catch (DbIntegrityException e) {
+                Alerts.showAlert("Error deleting department.", null, e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+
+    }
+
+
     public void updateTableView() {
         if (service == null) {
             throw new IllegalStateException("Null service.");
@@ -93,6 +133,7 @@ public class DepartmentListViewController implements Initializable, DataChangeLi
         observableList = FXCollections.observableArrayList(departmentList);
         tableViewDepartment.setItems(observableList);
         initializeEditButtons();
+        initializeDeleteButtons();
     }
 
     private void createDialogForm(Department department, Stage parentStage, String absoluteName) {
