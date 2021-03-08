@@ -19,6 +19,7 @@ import model.service.DepartmentService;
 import model.service.SellerService;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -116,13 +117,29 @@ public class SellerFormViewController implements Initializable {
     private Seller getFormData() {
         Seller seller = new Seller();
         seller.setId(Util.parseToInt(labelId.getText()));
-        String name = textFieldName.getText();
         ValidationException exception = new ValidationException("Validation error");
-        if (name != null && !name.trim().equals("")) {
-            seller.setName(name);
-        } else {
+        String name = textFieldName.getText();
+        if (name == null || name.trim().equals("")) {
             exception.addError("name", "Field can't be empty.");
         }
+        seller.setName(name);
+        String email = textFieldEmail.getText();
+        if (email == null || email.trim().equals("")) {
+            exception.addError("email", "Field can't be empty.");
+        }
+        seller.setEmail(email);
+        String baseSalary = textFieldBaseSalary.getText();
+        if (baseSalary == null || baseSalary.trim().equals("")) {
+            exception.addError("baseSalary", "Field can't be empty.");
+        }
+        seller.setBaseSalary(Util.parseToDouble(baseSalary));
+        if (datePickerBirthdate.getValue() == null) {
+            exception.addError("birthDate", "Field can't be empty.");
+        } else {
+            Instant instant = Instant.from(datePickerBirthdate.getValue().atStartOfDay(ZoneId.systemDefault()));
+            seller.setBirthDate(Date.from(instant));
+        }
+        seller.setDepartment(comboBoxDepartment.getValue());
         if (exception.getErrors().size() > 0) {
             throw exception;
         }
@@ -168,8 +185,9 @@ public class SellerFormViewController implements Initializable {
 
     private void setErrors(Map<String, String> errors) {
         Set<String> fields = errors.keySet();
-        if (fields.contains("name")) {
-            labelErrorName.setText(errors.get("name"));
-        }
+        labelErrorName.setText(fields.contains("name") ? errors.get("name") : "");
+        labelErrorEmail.setText(fields.contains("email") ? errors.get("email") : "");
+        labelErrorBaseSalary.setText(fields.contains("baseSalary") ? errors.get("baseSalary") : "");
+        labelErrorBirthdate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
     }
 }

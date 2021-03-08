@@ -25,6 +25,13 @@ public class Util {
             return null;
         }
     }
+    public static Double parseToDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
     public static <T> void formatTableColumnDate(TableColumn<T, Date> tableColumn, String format) {
         tableColumn.setCellFactory(column -> new TableCell<>() {
             private SimpleDateFormat sdf = new SimpleDateFormat(format);
