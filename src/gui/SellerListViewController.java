@@ -19,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Seller;
+import model.service.DepartmentService;
 import model.service.SellerService;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.ResourceBundle;
 
 public class SellerListViewController implements Initializable, DataChangeListener {
 
-    private SellerService service;
+    private SellerService sellerService;
 
     @FXML
     private TableView<Seller> tableViewSeller;
@@ -56,12 +57,12 @@ public class SellerListViewController implements Initializable, DataChangeListen
     @FXML
     public void onButtonNewAction(ActionEvent event) {
         Stage parentStage = Util.currentStage(event);
-        Seller department = new Seller();
-        createDialogForm(department, parentStage,"SellerFormView.fxml");
+        Seller seller = new Seller();
+        createDialogForm(seller, parentStage,"SellerFormView.fxml");
     }
 
-    public void setService(SellerService service) {
-        this.service = service;
+    public void setService(SellerService sellerService) {
+        this.sellerService = sellerService;
     }
 
     @Override
@@ -87,15 +88,15 @@ public class SellerListViewController implements Initializable, DataChangeListen
             private final Button button = new Button("Edit");
 
             @Override
-            protected void updateItem(Seller department, boolean empty) {
-                super.updateItem(department, empty);
-                if (department == null) {
+            protected void updateItem(Seller seller, boolean empty) {
+                super.updateItem(seller, empty);
+                if (seller == null) {
                     setGraphic(null);
                     return;
                 }
                 setGraphic(button);
                 button.setOnAction(event ->
-                        createDialogForm(department, Util.currentStage(event), "SellerFormView.fxml" ));
+                        createDialogForm(seller, Util.currentStage(event), "SellerFormView.fxml" ));
             }
         });
     }
@@ -106,60 +107,60 @@ public class SellerListViewController implements Initializable, DataChangeListen
             private final Button button = new Button("Delete");
 
             @Override
-            protected void updateItem(Seller department, boolean empty) {
-                super.updateItem(department, empty);
-                if (department == null) {
+            protected void updateItem(Seller seller, boolean empty) {
+                super.updateItem(seller, empty);
+                if (seller == null) {
                     setGraphic(null);
                     return;
                 }
                 setGraphic(button);
-                button.setOnAction(event -> removeEntity(department));
+                button.setOnAction(event -> removeEntity(seller));
             }
         });
     }
 
-    private void removeEntity(Seller department) {
+    private void removeEntity(Seller seller) {
         Optional<ButtonType> result = Alerts.showConfirmation("Confirmation",
                 "Are you sure? This operation can not be undone.");
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            if (service == null) {
+            if (sellerService == null) {
                 throw new IllegalStateException("Service is null.");
             }
             try {
-                service.delete(department);
+                sellerService.delete(seller);
                 updateTableView();
             } catch (DbIntegrityException e) {
-                Alerts.showAlert("Error deleting department.", null, e.getMessage(), Alert.AlertType.ERROR);
+                Alerts.showAlert("Error deleting seller.", null, e.getMessage(), Alert.AlertType.ERROR);
             }
         }
 
     }
 
-
     public void updateTableView() {
-        if (service == null) {
+        if (sellerService == null) {
             throw new IllegalStateException("Null service.");
         }
-        List<Seller> departmentList = service.findAll();
+        List<Seller> departmentList = sellerService.findAll();
         observableList = FXCollections.observableArrayList(departmentList);
         tableViewSeller.setItems(observableList);
         initializeEditButtons();
         initializeDeleteButtons();
     }
 
-    private void createDialogForm(Seller department, Stage parentStage, String absoluteName) {
+    private void createDialogForm(Seller seller, Stage parentStage, String absoluteName) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
             Pane pane = loader.load();
 
             SellerFormViewController controller = loader.getController();
-            controller.setSeller(department);
-            controller.setSellerService(service);
+            controller.setSeller(seller);
+            controller.setServices(sellerService, new DepartmentService());
+            controller.loadComboBoxDepartments();
             controller.subscribeDataChangeListener(this);
             controller.setFormData();
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Enter department data:");
+            dialogStage.setTitle("Enter seller data:");
             dialogStage.setScene(new Scene(pane));
             dialogStage.setResizable(false);
             dialogStage.initOwner(parentStage);
